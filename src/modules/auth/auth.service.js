@@ -102,4 +102,23 @@ const getProfile = async (userId) => {
   return result.rows[0];
 };
 
-module.exports = { register, login, getProfile };
+const updateProfile = async (userId, { full_name, position, age }) => {
+  const result = await pool.query(
+    `UPDATE users
+     SET full_name = $1, position = $2, age = $3, updated_at = NOW()
+     WHERE id = $4
+     RETURNING id, full_name, email, role, position, age, created_at`,
+    [full_name, position, age, userId]
+  );
+
+  if (result.rows.length === 0) {
+    const error = new Error('User not found.');
+    error.statusCode = 404;
+    error.code = 'USER_NOT_FOUND';
+    throw error;
+  }
+
+  return result.rows[0];
+};
+
+module.exports = { register, login, getProfile, updateProfile };

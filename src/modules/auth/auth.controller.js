@@ -43,4 +43,23 @@ const getProfile = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, getProfile };
+const updateProfile = async (req, res, next) => {
+  try {
+    const { full_name, position, age } = req.body;
+    const user = await authService.updateProfile(req.user.id, {
+      full_name,
+      position,
+      age: age ? parseInt(age) : null,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully.',
+      data: user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { register, login, getProfile, updateProfile };
