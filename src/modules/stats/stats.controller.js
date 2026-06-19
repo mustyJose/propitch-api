@@ -52,4 +52,23 @@ const getAchievements = async (req, res, next) => {
   }
 };
 
-module.exports = { getPlayerStats, getSessionBreakdown, getWeeklyProgress, getAchievements };
+const getActivityHeatmap = async (req, res, next) => {
+  try {
+    const heatmap = await statsService.getActivityHeatmap(req.user.id);
+
+    res.status(200).json({
+      success: true,
+      data: heatmap,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = {
+  getPlayerStats,
+  getSessionBreakdown,
+  getWeeklyProgress,
+  getAchievements,
+  getActivityHeatmap,
+};

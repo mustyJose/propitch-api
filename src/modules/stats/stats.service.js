@@ -60,4 +60,24 @@ const getAchievements = async (userId) => {
   return result.rows;
 };
 
-module.exports = { getPlayerStats, getSessionBreakdown, getWeeklyProgress, getAchievements };
+const getActivityHeatmap = async (userId) => {
+  const result = await pool.query(
+    `SELECT session_date, COUNT(*) as session_count, SUM(duration_minutes) as total_minutes
+     FROM training_sessions
+     WHERE user_id = $1
+       AND session_date >= NOW() - INTERVAL '120 days'
+     GROUP BY session_date
+     ORDER BY session_date ASC`,
+    [userId]
+  );
+
+  return result.rows;
+};
+
+module.exports = {
+  getPlayerStats,
+  getSessionBreakdown,
+  getWeeklyProgress,
+  getAchievements,
+  getActivityHeatmap,
+};
